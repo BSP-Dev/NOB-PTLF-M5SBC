@@ -1,0 +1,16 @@
+diff --git a/arch/arm/dts/genio-510-evk-common.dtsi b/arch/arm/dts/genio-510-evk-common.dtsi
+index 3fabf22a5a..38a20db772 100644
+--- a/arch/arm/dts/genio-510-evk-common.dtsi
++++ b/arch/arm/dts/genio-510-evk-common.dtsi
+@@ -10,9 +10,9 @@
+ 
+ / {
+ 	memory@40000000 {
+-		/* 4GB */
++		/* 2GB */
+ 		device_type = "memory";
+-		reg = <0 0x40000000 1 0x00000000>;
++		reg = <0 0x40000000 0 0x80000000>;
+ 	};
+ 
+ 	firmware: firmware {

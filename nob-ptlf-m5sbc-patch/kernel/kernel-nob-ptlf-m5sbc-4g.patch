@@ -1,0 +1,733 @@
+diff --git a/arch/arm64/boot/dts/mediatek/mt6359.dtsi b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
+index 4395dada4510..ef148de953b6 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6359.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
+@@ -375,6 +375,7 @@ imp {
+ 
+ 		mt6359rtc: mt6359rtc {
+ 			compatible = "mediatek,mt6358-rtc";
++			status = "disabled";
+ 		};
+ 
+ 		pmic_efuse: pmic-efuse {
+diff --git a/arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dts b/arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dts
+index 4bdc53917bcb..fbd8f8669c0d 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dts
+@@ -27,25 +27,73 @@ aliases {
+ 		ethernet0 = &eth;
+ 		serial0 = &uart0;
+ 		dsi0 = &dsi0;
++		rtc0 = &pcf85063;
+ 	};
+ 
++	/*
+ 	backlight_lcd0: backlight-lcd0 {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&disp_pwm0 0 500000>;
+-		enable-gpios = <&pio 8 GPIO_ACTIVE_HIGH>;
++		enable-gpios = <&pio 115 GPIO_ACTIVE_HIGH>;
+ 		brightness-levels = <0 1023>;
+ 		num-interpolated-steps = <1023>;
+ 		default-brightness-level = <576>;
+ 		status = "disabled";
+ 	};
++	*/
+ 
++	/*
+ 	backlight_lcd1: backlight-lcd1 {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&disp_pwm1 0 500000>;
+ 		brightness-levels = <0 1023>;
+ 		num-interpolated-steps = <1023>;
+ 		default-brightness-level = <576>;
++		status = "okay";
+ 	};
++	*/
++	/*
++	backlight_lcd_rgb: backlight-lcd2 {
++		compatible = "pwn-backlight";
++		pwms = <&pwm 3 500000>;
++		brightness-levels = <0 1023>;
++		num-interpolated-steps = <1023>;
++		default-brightness-level = <576>;
++		status = "okay";
++	};
++
++	panel {
++		compatible = "rocktech,rk070er9427";
++		backlight = <&backlight_lcd_rgb>;
++		power-supply = <&hdmi_en>;
++
++		reset-gpios = <&pio 8 GPIO_ACTIVE_LOW>;
++		// interrupt-parent = <&pio>;
++		// interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
++		
++		width-mm = <154>;
++		height-mm = <86>;
++
++		panel-timing {
++			clock-frequency = <33300000>;
++			hactive = <800>;
++			vactive = <480>;
++
++			hfront-porch = <210>;
++			hback-porch = <46>;
++			hsync-len = <1>;
++
++			vfront-porch = <22>;
++			vback-porch = <23>;
++			vsync-len = <1>;
++
++			hsync-active = <0>;
++			vsync-active = <0>;
++			de-active = <1>;
++			pixelclk-active = <0>;
++		};
++	};
++	*/
+ 
+ 	chosen {
+ 		stdout-path = "serial0:921600n8";
+@@ -145,6 +193,7 @@ common_fixed_5v: regulator-0 {
+ 		regulator-always-on;
+ 	};
+ 
++	/*
+ 	edp_panel_fixed_3v3: regulator-1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "edp_panel_3v3";
+@@ -155,7 +204,9 @@ edp_panel_fixed_3v3: regulator-1 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&edp_panel_3v3_en_pins>;
+ 	};
++	*/
+ 
++	/*
+ 	gpio_fixed_3v3: regulator-2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "gpio_3v3_en";
+@@ -165,6 +216,7 @@ gpio_fixed_3v3: regulator-2 {
+ 		enable-active-high;
+ 		regulator-always-on;
+ 	};
++	*/
+ 
+ 	sdio_fixed_1v8: regulator-3 {
+ 		compatible = "regulator-fixed";
+@@ -189,6 +241,7 @@ mtk_fsource: mtk-fsource {
+ 		vout-supply = <&mt6359_vefuse_ldo_reg>;
+ 	};
+ 
++	/*
+ 	touch0_fixed_3v3: regulator-5 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "touch_3v3";
+@@ -197,26 +250,28 @@ touch0_fixed_3v3: regulator-5 {
+ 		gpio = <&pio 119 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+-
+-	usb_hub_fixed_3v3: regulator-6 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "usb_hub_3v3";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-		gpio = <&pio 112 GPIO_ACTIVE_HIGH>; /* HUB_3V3_EN */
+-		startup-delay-us = <10000>;
+-		enable-active-high;
+-	};
+-
+-	usb_hub_reset_1v8: regulator-7 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "usb_hub_reset";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-		gpio = <&pio 7 GPIO_ACTIVE_HIGH>; /* HUB_RESET */
+-		vin-supply = <&usb_hub_fixed_3v3>;
+-	};
+-
++	*/
++
++	// usb_hub_fixed_3v3: regulator-6 {
++	// 	compatible = "regulator-fixed";
++	// 	regulator-name = "usb_hub_3v3";
++	// 	regulator-min-microvolt = <3300000>;
++	// 	regulator-max-microvolt = <3300000>;
++	// 	gpio = <&pio 112 GPIO_ACTIVE_HIGH>; /* HUB_3V3_EN */
++	// 	startup-delay-us = <10000>;
++	// 	enable-active-high;
++	// };
++
++	// usb_hub_reset_1v8: regulator-7 {
++	// 	compatible = "regulator-fixed";
++	// 	regulator-name = "usb_hub_reset";
++	// 	regulator-min-microvolt = <1800000>;
++	// 	regulator-max-microvolt = <1800000>;
++	// 	gpio = <&pio 7 GPIO_ACTIVE_HIGH>; /* HUB_RESET */
++	// 	vin-supply = <&usb_hub_fixed_3v3>;
++	// };
++
++	/*
+ 	usb_p0_vbus: regulator-8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb_p0_vbus";
+@@ -225,7 +280,9 @@ usb_p0_vbus: regulator-8 {
+ 		gpio = <&pio 84 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
++	*/
+ 
++	/*
+ 	usb_p1_vbus: regulator-9 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb_p1_vbus";
+@@ -234,6 +291,7 @@ usb_p1_vbus: regulator-9 {
+ 		gpio = <&pio 87 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
++	*/
+ 
+ 	usb_p2_vbus: regulator-10 {
+ 		compatible = "regulator-fixed";
+@@ -252,6 +310,36 @@ dsi0_en: dsi0-en {
+ 		pinctrl-0 = <&dsi0_en_pins_default>;
+ 	};
+ 
++	hdmi_en: hdmi-en {
++		compatible = "regulator-fixed";
++		regulator-name = "hdmi_en";
++		enable-active-high;
++		gpio = <&pio 87 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmi_vcc_enable>;
++		regulator-always-on;
++	};
++
++	usb3_en: usb3-en {
++		compatible = "regulator-fixed";
++		regulator-name = "usb3_en";
++		enable-active-high;
++		gpio = <&pio 89 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb3_enable>;
++		regulator-always-on;
++	};
++
++	dsi_led_pwr: dsi-led-pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "dsi_led_pwr";
++		enable-active-high;
++		gpio = <&pio 88 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&dsi_bk_pwr>;
++		regulator-always-on;
++	};
++
+ 	amic_codec: amic-codec {
+ 		#sound-dai-cells = <0>;
+ 		compatible = "dmic-codec";
+@@ -324,6 +412,7 @@ ap-ntc {
+ 		polling-delay = <1000>; /* milliseconds */
+ 		polling-delay-passive = <0>; /* milliseconds */
+ 		thermal-sensors = <&tboard_thermistor1>;
++		status = "disabled";
+ 
+ 		trips {
+ 			ap_ntc_crit: ap-ntc-crit {
+@@ -399,6 +488,7 @@ &i2c0 {
+ 	clock-frequency = <400000>;
+ 	status = "okay";
+ 
++	/*
+ 	touchscreen@5d {
+ 		compatible = "goodix,gt9271";
+ 		reg = <0x5d>;
+@@ -411,6 +501,7 @@ touchscreen@5d {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&touch_pins>;
+ 	};
++	*/
+ };
+ 
+ &i2c1 {
+@@ -419,6 +510,7 @@ &i2c1 {
+ 	clock-frequency = <400000>;
+ 	status = "okay";
+ 
++	/*
+ 	it5205fn: it5205fn@48 {
+ 		compatible = "mediatek,it5205fn";
+ 		reg = <0x48>;
+@@ -426,6 +518,7 @@ it5205fn: it5205fn@48 {
+ 		svid = /bits/ 16 <0xff01>;
+ 		status = "okay";
+ 	};
++	*/
+ };
+ 
+ &i2c2 {
+@@ -443,12 +536,13 @@ &i2c3 {
+ };
+ 
+ &i2c4 {
+-	pinctrl-names = "default", "default";
++	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c4_pins>;
+-	pinctrl-1 = <&rt1715_int_pins>;
+-	clock-frequency = <1000000>;
++	// pinctrl-1 = <&rt1715_int_pins>;
++	clock-frequency = <400000>;
+ 	status = "okay";
+ 
++	/*
+ 	rt1715@4e {
+ 		compatible = "richtek,rt1715";
+ 		reg = <0x4e>;
+@@ -498,6 +592,13 @@ ports {
+ 			port@0 {};
+ 		};
+ 	};
++	*/
++
++	pcf85063: pcf85063@51 {
++		compatible = "nxp,pcf85063";
++		reg = <0x51>;
++		status = "okay";
++	};
+ };
+ 
+ &i2c5 {
+@@ -512,6 +613,17 @@ &i2c6 {
+ 	pinctrl-0 = <&i2c6_pins>;
+ 	clock-frequency = <400000>;
+ 	status = "okay";
++
++	baseboard_eeprom: baseboard_eeprom@57 {
++		compatible = "atmel,24c02";
++		label = "AT24C02D";
++		reg = <0x57>;
++		pagesize = <8>;
++		size = <256>;
++		address-width = <8>;
++		num-addresses = <1>;
++		status = "okay";
++	};
+ };
+ 
+ &mfg0 {
+@@ -743,6 +855,7 @@ &dsi0 {
+ 	status = "disabled";
+ 	poweron-in-hs-mode = <0>;
+ 
++	/*
+ 	panel@0 {
+ 		compatible = "startek,kd070fhfid078";
+ 		status = "disabled";
+@@ -759,7 +872,19 @@ panel0_in: endpoint {
+ 			};
+ 		};
+ 	};
++	*/
+ 
++	/*
++	panel@1 {
++		status = "disabled";
++		reg = <1>;
++		interrupt-parent = <&pio>;
++		interrupts = <116 IRQ_TYPE_LEVEL_HIGH>;
++		reset-gpios = <&pio 117 GPIO_ACTIVE_HIGH>;
++	};
++	*/
++
++	/*
+ 	ports {
+ 		port {
+ 			dsi0_out: endpoint {
+@@ -767,15 +892,106 @@ dsi0_out: endpoint {
+ 			};
+ 		};
+ 	};
++	*/
+ };
+ 
++/*
+ &disp_pwm1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&disp_pwm1_pin_default>;
++	status = "okay";
++};
++*/
++&disp_pwm0 {
+ 	status = "disabled";
+ };
+ 
++&pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm1_pin_default>;
++	status = "okay";
++};
++
+ &pio {
++	gpio_enable: gpio-enable {
++		pins-en {
++			pinmux = <PINMUX_GPIO0__FUNC_B_GPIO0>,
++				<PINMUX_GPIO1__FUNC_B_GPIO1>,
++				<PINMUX_GPIO5__FUNC_B_GPIO5>,
++				<PINMUX_GPIO6__FUNC_B_GPIO6>,
++				<PINMUX_GPIO9__FUNC_B_GPIO9>,
++				// <PINMUX_GPIO10__FUNC_B_GPIO10>, regulator-0
++				<PINMUX_GPIO11__FUNC_B_GPIO11>,
++				<PINMUX_GPIO12__FUNC_B_GPIO12>,
++				<PINMUX_GPIO17__FUNC_B_GPIO17>, // TCM_nRST
++				<PINMUX_GPIO22__FUNC_B_GPIO22>,
++				<PINMUX_GPIO37__FUNC_B_GPIO37>,
++				<PINMUX_GPIO38__FUNC_B_GPIO38>,
++				<PINMUX_GPIO39__FUNC_B_GPIO39>,
++				<PINMUX_GPIO40__FUNC_B_GPIO40>;
++			output-high;
++		};
++	};
++
++	tcm_solenoid_buck_en: tcm-solenoid-buck-en {
++		pin-en {
++			pinmux = <PINMUX_GPIO15__FUNC_B_GPIO15>;
++			output-high;
++		};
++	};
++
++	dsi_bk_pwr: dsi-bk-pwr {
++		pin-pwr {
++			pinmux = <PINMUX_GPIO88__FUNC_B_GPIO88>;
++			output-high;
++		};
++	};
++	
++	tcm_boot: tcm-boot {
++		pin-ctrl {
++			pinmux = <PINMUX_GPIO114__FUNC_B_GPIO114>;
++			output-high;
++		};
++	};
++
++	uart_switch_stm32: uart-switch-stm32 {
++		pin-switch {
++			pinmux = <PINMUX_GPIO110__FUNC_B_GPIO110>;
++			output-high;
++		};
++	};
++
++	barcode_gpio: barcode-gpio {
++		pin-ctrl {
++			pinmux = <PINMUX_GPIO7__FUNC_B_GPIO7>;
++			output-high;
++		};
++	};
++
++	usb2_pc_vbus_en: usb-vbus-en {
++		pins-en {
++			pinmux = <PINMUX_GPIO14__FUNC_B_GPIO14>,
++				 <PINMUX_GPIO118__FUNC_B_GPIO118>,
++				 <PINMUX_GPIO119__FUNC_B_GPIO119>,
++				 <PINMUX_GPIO120__FUNC_B_GPIO120>;
++			output-high;
++		};
++	};
++
++	usb3_enable: usb3-enable {
++		pins-enable {
++			pinmux = <PINMUX_GPIO89__FUNC_B_GPIO89>;
++			output-high;
++		};
++	};
++
++	hdmi_vcc_enable: hdmi-vcc-enable {
++		pins-enable {
++			pinmux = <PINMUX_GPIO87__FUNC_B_GPIO87>;
++			output-high;
++		};
++	};
++
+ 	audio_default_pins: audio-default-pins {
+ 		pins-cmd-dat {
+ 			pinmux = <PINMUX_GPIO101__FUNC_O_AUD_CLK_MOSI>,
+@@ -787,12 +1003,12 @@ pins-cmd-dat {
+ 				 <PINMUX_GPIO107__FUNC_B0_I2SIN_MCK>,
+ 				 <PINMUX_GPIO108__FUNC_B0_I2SIN_BCK>,
+ 				 <PINMUX_GPIO109__FUNC_B0_I2SIN_WS>,
+-				 <PINMUX_GPIO110__FUNC_I0_I2SIN_D0>,
+-				 <PINMUX_GPIO114__FUNC_O_I2SO2_MCK>,
+-				 <PINMUX_GPIO115__FUNC_B0_I2SO2_BCK>,
+-				 <PINMUX_GPIO116__FUNC_B0_I2SO2_WS>,
+-				 <PINMUX_GPIO117__FUNC_O_I2SO2_D0>,
+-				 <PINMUX_GPIO118__FUNC_O_I2SO2_D1>,
++				//  <PINMUX_GPIO110__FUNC_I0_I2SIN_D0>,
++				//  <PINMUX_GPIO114__FUNC_O_I2SO2_MCK>,
++				//  <PINMUX_GPIO115__FUNC_B0_I2SO2_BCK>,
++				//  <PINMUX_GPIO116__FUNC_B0_I2SO2_WS>,
++				//  <PINMUX_GPIO117__FUNC_O_I2SO2_D0>,
++				//  <PINMUX_GPIO118__FUNC_O_I2SO2_D1>,
+ 				 <PINMUX_GPIO121__FUNC_B0_PCM_CLK>,
+ 				 <PINMUX_GPIO122__FUNC_B0_PCM_SYNC>,
+ 				 <PINMUX_GPIO124__FUNC_I0_PCM_DI>,
+@@ -810,12 +1026,14 @@ pins-cmd-dat {
+ 		};
+ 	};
+ 
++	/*
+ 	edp_panel_3v3_en_pins: edp-panel-3v3-en-pins {
+ 		pins1 {
+ 			pinmux = <PINMUX_GPIO15__FUNC_B_GPIO15>;
+ 			output-high;
+ 		};
+ 	};
++	*/
+ 
+ 	eth_default_pins: eth-default-pins {
+ 		pins-cc {
+@@ -985,9 +1203,9 @@ panel-en {
+ 		};
+ 	};
+ 
+-	disp_pwm1_pin_default: disp-pwm1-pin-default {
++	pwm1_pin_default: pwm1-pin-default {
+ 		pins1 {
+-			pinmux = <PINMUX_GPIO30__FUNC_O_DISP_PWM1>;
++			pinmux = <PINMUX_GPIO30__FUNC_O_PWM_1>;
+ 		};
+ 	};
+ 
+@@ -1180,6 +1398,7 @@ pins-rst {
+ 		};
+ 	};
+ 
++	/*
+ 	rt1715_int_pins: rt1715-int-pins {
+ 		pins_cmd0_dat {
+ 			pinmux = <PINMUX_GPIO12__FUNC_B_GPIO12>;
+@@ -1187,6 +1406,7 @@ pins_cmd0_dat {
+ 			input-enable;
+ 		};
+ 	};
++	*/
+ 
+ 	spi0_pins: spi0-pins {
+ 		pins-spi {
+@@ -1218,6 +1438,7 @@ pins-spi {
+ 		};
+ 	};
+ 
++	/*
+ 	touch_pins: touch-pins {
+ 		pins-irq {
+ 			pinmux = <PINMUX_GPIO6__FUNC_B_GPIO6>;
+@@ -1230,6 +1451,7 @@ pins-reset {
+ 			output-high;
+ 		};
+ 	};
++	*/
+ 
+ 	uart0_pins: uart0-pins {
+ 		pins {
+@@ -1255,6 +1477,14 @@ pins {
+ 		};
+ 	};
+ 
++	uart3_pins: uart3-pins {
++		pins {
++			pinmux = <PINMUX_GPIO90__FUNC_O_UTXD3>,
++				 <PINMUX_GPIO91__FUNC_I1_URXD3>;
++			bias-pull-up;
++		};
++	};
++
+ 	usb_default_pins: usb-default-pins {
+ 		pins-iddig {
+ 			pinmux = <PINMUX_GPIO83__FUNC_B_GPIO83>;
+@@ -1267,14 +1497,17 @@ pins-valid {
+ 			input-enable;
+ 		};
+ 
++		/*
+ 		pins-vbus {
+ 			pinmux = <PINMUX_GPIO84__FUNC_O_USB_DRVVBUS>;
+ 			output-high;
+ 		};
++		*/
+ 
+ 	};
+ 
+ 	usb1_default_pins: usb1-default-pins {
++		/*
+ 		pins-valid {
+ 			pinmux = <PINMUX_GPIO88__FUNC_I0_VBUSVALID_1P>;
+ 			input-enable;
+@@ -1284,6 +1517,7 @@ pins-usb-hub-3v3-en {
+ 			pinmux = <PINMUX_GPIO112__FUNC_B_GPIO112>;
+ 			output-high;
+ 		};
++		*/
+ 	};
+ 
+ 	wifi_pwrseq_pins: wifi-pwrseq-pins {
+@@ -1323,10 +1557,31 @@ &uart2 {
+ 	status = "okay";
+ };
+ 
++&uart3 {
++	pinctrl-0 = <&uart3_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
+ &mipi_tx0 {
+ 	status = "disabled";
+ };
+ 
++&spi1 {
++	pinctrl-0 = <&spi1_pins>;
++	pinctrl-names = "default";
++	mediatek,pad-select = <0>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	spidev@0 {
++		compatible = "mediatek,aiot-board";
++		spi-max-frequency = <50000000>;
++		reg = <0>;
++	};
++};
++
+ &spi2 {
+ 	pinctrl-0 = <&spi2_pins>;
+ 	pinctrl-names = "default";
+@@ -1334,6 +1589,12 @@ &spi2 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+ 	status = "okay";
++
++	spidev@0 {
++		compatible = "mediatek,aiot-board";
++		spi-max-frequency = <50000000>;
++		reg = <0>;
++	};
+ };
+ 
+ &spmi {
+@@ -1395,16 +1656,18 @@ &ssusb0 {
+ 	maximum-speed = "high-speed";
+ 	usb-role-switch;
+ 	dr_mode = "otg";
+-	vusb33-supply = <&mt6359_vusb_ldo_reg>;
++	// vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ 	status = "okay";
+ 	wakeup-source;
+ 
++	/*
+ 	connector {
+ 		compatible = "gpio-usb-b-connector", "usb-b-connector";
+ 		type = "micro";
+ 		id-gpios = <&pio 83 GPIO_ACTIVE_HIGH>;
+ 		vbus-supply = <&usb_p0_vbus>;
+ 	};
++	*/
+ };
+ 
+ &u2port0 {
+@@ -1413,24 +1676,26 @@ &u2port0 {
+ 
+ &xhci0 {
+ 	status = "okay";
+-	vusb33-supply = <&mt6359_vusb_ldo_reg>;
++	// vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ };
+ 
+ &ssusb1 {
+ 	pinctrl-0 = <&usb1_default_pins>;
+ 	pinctrl-names = "default";
+-	vusb33-supply = <&mt6359_vusb_ldo_reg>;
+-	dr_mode = "otg";
++	// vusb33-supply = <&mt6359_vusb_ldo_reg>;
++	maximum-speed = "super-speed";
++	dr_mode = "host";
+ 	mediatek,usb3-drd;
+-	usb-role-switch;
++	// usb-role-switch;
+ 	status = "okay";
+ 	wakeup-source;
+-
++	/*
+ 	port {
+ 		ssusb1_ep: endpoint {
+ 			remote-endpoint = <&tcpc_typec_usb>;
+ 		};
+ 	};
++	*/
+ };
+ 
+ &u2port1 {
+@@ -1443,17 +1708,19 @@ &u3port1 {
+ 
+ &xhci1 {
+ 	status = "okay";
+-	vusb33-supply = <&mt6359_vusb_ldo_reg>;
+-	vbus-supply = <&usb_hub_reset_1v8>;
++	// vusb33-supply = <&mt6359_vusb_ldo_reg>;
++	// vbus-supply = <&usb_hub_reset_1v8>;
+ };
+ 
+ &ssusb2 {
+ 	maximum-speed = "high-speed";
+ 	usb-role-switch;
+ 	dr_mode = "host";
+-	vusb33-supply = <&mt6359_vusb_ldo_reg>;
++	// vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ 	status = "okay";
+ 	wakeup-source;
++	pinctrl-names = "default";
++	pinctrl-0 = <&usb2_pc_vbus_en>;
+ };
+ 
+ &u2port2 {
+@@ -1462,7 +1729,7 @@ &u2port2 {
+ 
+ &xhci2 {
+ 	status = "okay";
+-	vusb33-supply = <&mt6359_vusb_ldo_reg>;
++	// vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ };
+ 
+ &cam_vcore {
+@@ -1475,6 +1742,7 @@ &img_vcore {
+ 
+ &accdet {
+ 	mediatek,eint-level-pol = <IRQ_TYPE_LEVEL_LOW>;
++	status = "disabled";
+ };
+ 
+ &afe {
+@@ -1510,13 +1778,14 @@ dai-link-0 {
+ 		link-name = "DL_SRC_BE";
+ 
+ 		codec {
+-			sound-dai = <&pmic 0>, <&accdet>;
++			sound-dai = <&pmic 0>; //, <&accdet>;
+ 		};
+ 	};
+ 
+ 	dai-link-1 {
+ 		sound-dai = <&afe>;
+ 		link-name = "UL_SRC_BE";
++		status = "disabled";
+ 
+ 		codec {
+ 			sound-dai = <&pmic 0>, <&amic_codec>;
+@@ -1526,6 +1795,7 @@ codec {
+ 	dai-link-2 {
+ 		sound-dai = <&afe>;
+ 		link-name = "DMIC_BE";
++		status = "disabled";
+ 
+ 		codec {
+ 			sound-dai = <&dmic_codec>;
