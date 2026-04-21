@@ -14,18 +14,38 @@ NOB-PTLF-M5SBC/
 |   |   └── kernel-nob-ptlf-m5sbc-4g.patch
 |   |
 |   └── u-boot/
-|       └── nob-ptlf-m5sbc-2g.patch
+|       ├── nob-ptlf-m5sbc-2g.patch
+|       └── nob-ptlf-m5sbc-4g.patch
 |
 ├── tools/
 │   ├── lancfg.sh
 │   └── smarcCfg
-│
+|
 └── README.md
 ```
-## U-boot Patch (Only for 2GB board)
-- Please copy the `u-boot/nob-ptlf-m5sbc-2g.patch` to `$BUILD_DIR/tmp/work/genio_510_evk-poky-linux/u-boot/git/git`
+## Yocto BSP Configurations
+- For packages installation, please add the following commands in the `$BUILD_DIR/conf/local.conf`
+```
+# Package installation
+PACKAGE_CLASSES = "package_deb"
+IMAGE_INSTALL:append = " glibc-utils localedef ntp nfs-utils dosfstools dos2unix net-tools"
+IMAGE_INSTALL:append = " i2c-tools usbutils iperf3 rng-tools mtd-utils bluez5 can-utils pm-utils"
+IMAGE_INSTALL:append = " lshw memtester gptfdisk rsync vim libmnl libmodbus networkmanager"
+IMAGE_INSTALL:append = " sysbench stress-ng hdparm devmem2 matchbox-terminal python3-python-vlc"
+IMAGE_INSTALL:append = " git doxygen libp11 dbus json-c json-glib cmocka jq"
+IMAGE_INSTALL:append = " lame cups libvpx libssh libssh2 fmt libpcre leveldb tslib zlib lsb-release libusb1 libusbg"
+IMAGE_INSTALL:append = " libgpiod libgpiod-dev libgpiod-tools dhcpcd wpa-suplicant mesa tzdata"
+IMAGE_INSTALL:append = " gstreamer1.0-plugins-bad gstreamer1.0-plugins-good ttf-bitstream-vera tree"
+IMAGE_INSTALL:append = " openldap openvpn qpdf tcpdump htop rfkill freetype cifs-utils v4l-utils mtools lmsensors"
+IMAGE_INSTALL:append = " modemmanager minicom python3-speedtest-cli gcc gcc-symlinks g++"
+IMAGE_INSTALL:append = " g++-symlinks make cmake automake libtool m4 autoconf-archive iproute2 procps autoconf"
+IMAGE_INSTALL:append = " pulseaudio pulseaudio-module-dbus-protocol trace-cmd"
+```
+## U-boot Patch
+- Please copy the `u-boot/nob-ptlf-m5sbc-Xg.patch` to `$BUILD_DIR/tmp/work/genio_510_evk-poky-linux/u-boot/git/git`
 - Run patch apply
     ```shell=!
+    e.g.
     # For error check (Won't patch)
     git apply --check nob-ptlf-m5sbc-2g.patch
 
@@ -34,12 +54,13 @@ NOB-PTLF-M5SBC/
     ```
 - Re-build the u-boot
     ```shell=!
-    bitbake u-boot
+    bitbake u-boot -c compile -f && bitbake u-boot -c deploy -f
     ```
 ## Kernel Patch
-- Please copy the `kernel/kernel-nob-ptlf-m5sbc-4g.patch` to `$BUILD_DIR/tmp/work/genio_510_evk-poky-linux/linux-mtk/6.6.92/git`
+- Please copy the `kernel/kernel-nob-ptlf-m5sbc-Xg.patch` to `$BUILD_DIR/tmp/work/genio_510_evk-poky-linux/linux-mtk/6.6.92/git`
 - Run patch apply
     ```shell=!
+    e.g.
     # For error check (Won't patch)
     git apply --check kernel-nob-ptlf-m5sbc-4g.patch
 
@@ -75,3 +96,9 @@ NOB-PTLF-M5SBC/
     ```
     genio-flash -i rity-demo-image
     ```
+## Panel Selection during Boot Up
+- Default, 5-inch RGB panel (800x480) is used, to use 7-inch (1024x600) RGB panel please run the following commands in u-boot while boot up the device.
+```shell=!
+=> run hdmi_1024x600
+=> run bootcmd
+```
