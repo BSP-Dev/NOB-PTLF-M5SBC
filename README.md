@@ -97,8 +97,14 @@ IMAGE_INSTALL:append = " pulseaudio pulseaudio-module-dbus-protocol trace-cmd"
     genio-flash -i rity-demo-image
     ```
 ## Panel Selection during Boot Up
-- Default, 5-inch RGB panel (800x480) is used, to use 7-inch (1024x600) RGB panel please run the following commands in u-boot while boot up the device.
-```shell=!
-=> run hdmi_1024x600
-=> run bootcmd
-```
+- Default, use 7-inch (1024x600) RGB panel resolution, if you want to change resolution, please run the following commands in u-boot while boot up the device.
+    ```
+    e.g. 800x480, 60Hz
+    => setenv bootargs root=PARTLABEL=rootfs rootwait video=HDMI-A-1:800x480@60e
+    => saveenv
+    => reset
+    ```
+- Also, you can check the resolution modification is applyed, check the following result.
+    ```
+    cat /proc/cmdline
+    ```

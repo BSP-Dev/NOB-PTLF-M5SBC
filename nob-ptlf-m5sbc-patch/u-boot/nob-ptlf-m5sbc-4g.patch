@@ -1,22 +1,59 @@
+diff --git a/boot/pxe_utils.c b/boot/pxe_utils.c
+index a364fa8bb5..bd8498ad04 100644
+--- a/boot/pxe_utils.c
++++ b/boot/pxe_utils.c
+@@ -616,10 +616,7 @@ static int label_boot(struct pxe_context *ctx, struct pxe_label *label)
+ 	 * Scenario 2: If there is an fdt_addr specified, pass it along to
+ 	 * bootm, and adjust argc appropriately.
+ 	 *
+-	 * Scenario 3: If there is an fdtcontroladdr specified, pass it along to
+-	 * bootm, and adjust argc appropriately.
+-	 *
+-	 * Scenario 4: fdt blob is not available.
++	 * Scenario 3: fdt blob is not available.
+ 	 */
+ 	bootm_argv[3] = env_get("fdt_addr_r");
+ 
+@@ -724,9 +721,6 @@ static int label_boot(struct pxe_context *ctx, struct pxe_label *label)
+ 	if (!bootm_argv[3])
+ 		bootm_argv[3] = env_get("fdt_addr");
+ 
+-	if (!bootm_argv[3])
+-		bootm_argv[3] = env_get("fdtcontroladdr");
+-
+ 	if (bootm_argv[3]) {
+ 		if (!bootm_argv[2])
+ 			bootm_argv[2] = "-";
+diff --git a/drivers/net/tsec.c b/drivers/net/tsec.c
+index d69a9ff477..519ea14b07 100644
+--- a/drivers/net/tsec.c
++++ b/drivers/net/tsec.c
+@@ -156,7 +156,7 @@ static int tsec_mcast_addr(struct udevice *dev, const u8 *mcast_mac, int join)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused tsec_set_promisc(struct udevice *dev, bool enable)
++static int tsec_set_promisc(struct udevice *dev, bool enable)
+ {
+ 	struct tsec_private *priv = dev_get_priv(dev);
+ 	struct tsec __iomem *regs = priv->regs;
 diff --git a/include/configs/mt8370.h b/include/configs/mt8370.h
-index 06ccd71bb6..ba96aa81ec 100644
+index 06ccd71bb6..49d30a1a57 100644
 --- a/include/configs/mt8370.h
 +++ b/include/configs/mt8370.h
-@@ -92,6 +92,8 @@
+@@ -92,6 +92,7 @@
  	"splashfile=logo.bmp\0" \
  	"splashdevpart=0#bootassets\0" \
  	"splashpos=m,m\0" \
-+	"bootargs=root=PARTLABEL=rootfs rootwait video=HDMI-A-1:800x480@60\0" \
-+	"hdmi_1024x600=setenv bootargs root=PARTLABEL=rootfs rootwait video=HDMI-A-1:1024x600@60\0" \
++	"bootargs=root=PARTLABEL=rootfs rootwait video=HDMI-A-1:1024x600@60e\0" \
  	BOOTENV
  #else
  #define CONFIG_EXTRA_ENV_SETTINGS \
-@@ -105,6 +107,8 @@
+@@ -105,6 +106,7 @@
  	"splashimage=" __stringify(CONFIG_SYS_LOAD_ADDR) "\0" \
  	"splashsource=sf\0" \
  	"splashpos=m,m\0" \
-+	"bootargs=root=PARTLABEL=rootfs rootwait video=HDMI-A-1:800x480@60\0" \
-+	"hdmi_1024x600=setenv bootargs root=PARTLABEL=rootfs rootwait video=HDMI-A-1:1024x600@60\0" \
++	"bootargs=root=PARTLABEL=rootfs rootwait video=HDMI-A-1:1024x600@60e\0" \
  	BOOTENV
  #endif
  #endif
