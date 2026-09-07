@@ -21,6 +21,9 @@ NOB-PTLF-M5SBC/
 │   ├── lancfg.sh
 │   └── smarcCfg
 |
+├── edid/
+│   └── PH800480T033-IBC06.bin
+|
 └── README.md
 ```
 ## Yocto BSP Configurations
@@ -96,15 +99,20 @@ IMAGE_INSTALL:append = " pulseaudio pulseaudio-module-dbus-protocol trace-cmd"
     ```
     genio-flash -i rity-demo-image
     ```
-## Panel Selection during Boot Up
-- Default, use 7-inch (1024x600) RGB panel resolution, if you want to change resolution, please run the following commands in u-boot while boot up the device.
+## Panel Boot Up
+### 5-inch RGB Panel
+- Create directory in rootfs at `/lib/firmware/edid` & place the EDID `PH800480T033-IBC06.bin`
     ```
-    e.g. 800x480, 60Hz
-    => setenv bootargs root=PARTLABEL=rootfs rootwait video=HDMI-A-1:800x480@60e
-    => saveenv
-    => reset
+    mkdir -p /lib/firmware/edid
+    cp PH800480T033-IBC06.bin /lib/firmware/edid/
     ```
-- Also, you can check the resolution modification is applyed, check the following result.
+- Check kernel configuration enable ? Should output `CONFIG_DRM_LOAD_EDID_FIRMWARE=y`
     ```
-    cat /proc/cmdline
+    zcat /proc/config.gz | grep -i DRM_LOAD_EDID
+    ```
+- Reboot and modify u-boot environment
+    ```
+    u-boot=> setenv bootargs drm.edid_firmware=HDMI-A-1:edid/PH800480T033-IBC06.bin video=HDMI-A-1:e
+    u-boot=> saveenv
+    u-boot=> reset
     ```

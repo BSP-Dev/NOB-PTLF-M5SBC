@@ -685,3 +685,40 @@ index 4bdc53917bcb..d376e427c99d 100644
  
  		codec {
  			sound-dai = <&dmic_codec>;
+diff --git a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+index 5c42fa3b8b09..6638dc5d8866 100644
+--- a/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_mt8195_hdmi.c
+@@ -1152,6 +1152,8 @@ static void mtk_hdmi_change_video_resolution(struct mtk_hdmi *hdmi)
+ 	bool ret = false;
+ 	struct drm_scdc *scdc;
+ 
++	// pr_err("TFP401A_DEBUG: ENTER mtk_hdmi_change_video_resolution\n");
++
+ 	mtk_hdmi_hw_reset(hdmi);
+ 	mtk_hdmi_set_sw_hpd(hdmi, true);
+ 	usleep_range(2, 5);
+@@ -1161,10 +1163,22 @@ static void mtk_hdmi_change_video_resolution(struct mtk_hdmi *hdmi)
+ 	mtk_hdmi_enable_hpd_pord_irq(hdmi, true);
+ 	mtk_hdmi_force_hdcp_hpd(hdmi);
+ 
+-	is_hdmi_sink = mtk_hdmi_sink_is_hdmi_device(hdmi);
++	/*
++	 * TFP401A bring-up:
++	 * Force DVI video-only mode.
++	 */
++	hdmi->dvi_mode = true;
++	is_hdmi_sink = false;
++
++	// pr_err("TFP401A_DEBUG: FORCE DVI mode, dvi_mode=%d is_hdmi_sink=%d\n",
++	//        hdmi->dvi_mode, is_hdmi_sink);
++
+ 	mtk_hdmi_set_deep_color(hdmi, is_hdmi_sink);
+ 	mtk_hdmi_enable_hdmi_mode(hdmi, is_hdmi_sink);
+ 
++	// pr_err("TFP401A_DEBUG: TOP_CFG00=0x%08x\n",
++	//        mtk_hdmi_read(hdmi, TOP_CFG00));
++
+ 	usleep_range(5, 10);
+ 	mtk_hdmi_hw_vid_black(hdmi, true);
+ 	mtk_hdmi_hw_aud_mute(hdmi);
